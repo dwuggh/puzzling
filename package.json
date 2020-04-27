@@ -29,13 +29,13 @@
     "@vue/cli-service": "~4.3.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
-    "electron": "^6.0.0",
+    "electron": "^8.2.3",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-vue": "^6.2.2",
     "prettier": "^1.19.1",
     "typescript": "~3.8.3",
-    "vue-cli-plugin-electron-builder": "~1.4.6",
+    "vue-cli-plugin-electron-builder": "github:nklayman/vue-cli-plugin-electron-builder#master",
     "vue-template-compiler": "^2.6.11"
   }
 }
