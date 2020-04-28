@@ -9,7 +9,7 @@ import Cube from "@/components/Cube";
 export default {
   name: "Index",
   components: {
-    Cube,
-  },
+    Cube
+  }
 };
 </script>

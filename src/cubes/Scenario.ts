@@ -15,7 +15,7 @@ export default class Scenario {
     );
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      canvas: document.getElementById("canvas"),
+      canvas: document.getElementById("canvas")
     });
     this.camera.position.set(0, 0, 5);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
