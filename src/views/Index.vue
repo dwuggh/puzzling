@@ -9,7 +9,14 @@ import Cube from "@/components/Cube";
 export default {
   name: "Index",
   components: {
-    Cube
-  }
+    Cube,
+  },
 };
 </script>
+
+<style scoped>
+.index {
+  height: 300px;
+  width: 100%;
+}
+</style>
