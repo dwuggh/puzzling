@@ -1,37 +1,37 @@
 import * as THREE from "three";
 
 export default class Scenario {
-  cube: HTMLElement;
+  width: number;
+  height: number;
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.Renderer;
 
-  constructor(id: string) {
-    this.cube = document.getElementById(id).parentElement;
+  constructor(element: HTMLCanvasElement, width: number, height: number) {
+    // this.cube = document.getElementById(element).parentElement;
     // console.log(this.cube);
+    this.width = width;
+    this.height = height;
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(
-      25,
-      this.cube.clientWidth / this.cube.clientHeight,
-      0.1,
-      1000
-    );
+    this.camera = new THREE.PerspectiveCamera(25, width / height, 0.1, 1000);
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      canvas: document.getElementById(id)
+      canvas: element,
     });
     this.camera.position.set(0, 0, 5);
-    this.renderer.setSize(this.cube.clientWidth, this.cube.clientHeight);
+    this.renderer.setSize(width, height);
 
     this.scene.add(new THREE.AxesHelper(10));
     this.animate();
 
-    window.addEventListener("resize", this.onWindowResize, false);
+    // window.addEventListener("resize", this.onWindowResize, false);
   }
   private onWindowResize = () => {
-    this.camera.aspect = this.cube.clientWidth / this.cube.clientHeight;
+    this.width = window.innerWidth * 0.8;
+    this.height = window.innerHeight * 0.8;
+    this.camera.aspect = this.width / this.height;
     this.camera.updateMatrix();
-    this.renderer.setSize(this.cube.clientWidth, this.cube.clientHeight);
+    this.renderer.setSize(this.width, this.height);
   };
   private animate = () => {
     requestAnimationFrame(this.animate);

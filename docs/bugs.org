@@ -1,0 +1,7 @@
+* UI bugs
+** TODO 1
+   SCHEDULED: <2020-04-29 Wed>
+*** description
+    resize callback weird behavior
+*** reporter
+    dwuggh
