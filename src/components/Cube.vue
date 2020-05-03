@@ -9,6 +9,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import { Scenario } from '../cubes/Scenario'
 import { RubiksCube } from '../cubes/RubiksCube'
+import { Order } from '../cubes/order'
 @Component
 export default class Cube extends Vue {
   // scenario: Scenario = null;
@@ -18,11 +19,11 @@ export default class Cube extends Vue {
     this.$nextTick(() => {
       // this.scenario = new Scenario("canvas");
       const canvas = document.getElementById('canvas') as HTMLCanvasElement
-      const scenario = new Scenario(canvas, this.widthData, this.heightData)
-      window.addEventListener('resize', scenario.onWindowResize, false)
+      const rubiksCube = new RubiksCube(3)
+      const scenario = new Scenario(canvas, rubiksCube)
 
-      const rubiksCube = new RubiksCube(3, scenario.scene, scenario.taskRunner)
-
+      rubiksCube.orderSet.unshift(new Order('R', [1,2], 3))
+      rubiksCube.orderSet.unshift(new Order('B', [1,2], 3))
       scenario.animate()
     })
   }
