@@ -104,10 +104,10 @@ export class RubiksCube implements RegularModel {
         return i * this.layer ** 2 + j * this.layer + level
       },
       F: (i: number, j: number, level = 0) => {
-        return i * this.layer ** 2 + j * this.layer + (this.layer - 1 - level )
+        return i * this.layer ** 2 + j * this.layer + (this.layer - 1 - level)
       },
       U: (i: number, j: number, level = 0) => {
-        return i * this.layer ** 2 + (this.layer - 1 - level ) * this.layer + j
+        return i * this.layer ** 2 + (this.layer - 1 - level) * this.layer + j
       },
       D: (i: number, j: number, level = 0) => {
         return i * this.layer ** 2 + level * this.layer + j
@@ -116,7 +116,7 @@ export class RubiksCube implements RegularModel {
         return level * this.layer ** 2 + i * this.layer + j
       },
       R: (i: number, j: number, level = 0) => {
-        return (this.layer - 1 - level ) * this.layer ** 2 + i * this.layer + j
+        return (this.layer - 1 - level) * this.layer ** 2 + i * this.layer + j
       },
     }
   }
@@ -307,8 +307,10 @@ export class RubiksCube implements RegularModel {
     for (let i = 0; i < this.layer; i++) {
       for (let j = 0; j < this.layer; j++) {
         // https://stackoverflow.com/questions/56568423/typescript-no-index-signature-with-a-parameter-of-type-string-was-found-on-ty/56569217
-        for (let level = 0; level < order.level; level ++) {
-          const index = this.faceIndicesHelper[order.face as keyof FaceIndicesHelper](i, j, level)
+        for (let level = 0; level < order.level; level++) {
+          const index = this.faceIndicesHelper[
+            order.face as keyof FaceIndicesHelper
+          ](i, j, level)
           this.rotationGroup.push(this.meshs[index])
         }
       }

@@ -3,5 +3,11 @@ module.exports = {
     electronBuilder: {
       nodeIntegration: true,
     },
+    quasar: {
+      importStrategy: 'kebab',
+      rtlSupport: false,
+    },
   },
+
+  transpileDependencies: ['quasar'],
 }

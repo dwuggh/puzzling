@@ -151,7 +151,6 @@ export class Order {
     return target
   }
   private _clockwiseStateMap(): state {
-
     const target = new Array(this.layer ** 3)
     const antiTarget = this._counterClockwiseStateMap()
     antiTarget.forEach((value: number, index: number) => {
