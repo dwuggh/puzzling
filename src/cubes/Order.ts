@@ -8,19 +8,11 @@ import * as THREE from 'three'
   examples: 2R, L3, U', D13, 2F3', 2F'3, etc
 */
 export type state = number[]
-export enum Faces {
-  R = 'R',
-  L = 'L',
-  U = 'U',
-  D = 'D',
-  F = 'F',
-  B = 'B',
-}
-enum Direction {
-  anticlockwise,
+
+export enum Direction {
+  counterClockwise,
   clockwise,
 }
-
 
 /*
   the Order class.
@@ -35,38 +27,66 @@ export class Order {
   rotatedDegree: number
   direction: Direction
   layer: number
-  // targetState: state
+  targetState: state
 
-  constructor(name: string, layer: number) {
+  constructor(name: string, layer = 3) {
     this.name = name
     this.layer = layer
-    // TODO add layer parse
+    const a = name[0]
+    if (isNaN(Number(a))) {
+      this.level = 1
+      this.face = a
+      name = name.substr(1)
+    } else {
+      if (Number(a) == 0) {
+        throw new Error('class Order: level too small')
+      } else if (Number(a) > layer) {
+        throw new Error('class Order: level is larger than layer')
+      } else {
+        console.log(a)
+        this.level = Number(a)
+        this.face = name[1]
+        name = name.substr(2)
+      }
+    }
+    // TODO add level parse
     // TODO clean code, better method
-    this.face = name[0]
+    // this.face = name[0]
     this.rotatedDegree = 0
-    if (name.length == 1) {
+
+    // console.log(this.level)
+    if (name.length == 0) {
       this.direction = Direction.clockwise
       this.moveCount = 1
-    } else if (name[1] == "'") {
+    } else if (name[0] == "'") {
       this.moveCount = 1
-      this.direction = Direction.anticlockwise
+      this.direction = Direction.counterClockwise
     } else {
-      this.moveCount = Number(name[1])
+      this.moveCount = Number(name[0])
       this.direction =
-        name.length == 2 ? Direction.clockwise : Direction.anticlockwise
+        name.length == 1 ? Direction.clockwise : Direction.counterClockwise
     }
-    this.level = 1
-    if (this.layer <= this.level) {
-      throw new Error('invalid order: too many layers')
-    }
+    // this.level = 1
+    // if (this.layer <= this.level) {
+    //   throw new Error('invalid order: too many layers')
+    // }
+    this.targetState =
+      this.direction == Direction.clockwise
+        ? this._clockwiseStateMap()
+        : this._counterClockwiseStateMap()
   }
 
   /*
     return radian angle to rotate
   */
   public getRemainingAngle(): number {
-    const total = (this.level * Math.PI) / 2
-    return Math.abs(total - this.rotatedDegree)
+    const total = (this.moveCount * Math.PI) / 2
+    if (this.rotatedDegree > 0) {
+      return total - this.rotatedDegree
+    } else {
+      return -this.rotatedDegree - total
+    }
+    // return Math.abs(total - Math.abs(this.rotatedDegree))
   }
 
   /*
@@ -80,7 +100,7 @@ export class Order {
     finally we get the coordinate:
     (j, lay - i)
   */
-  public static clockwiseStateMap(layer: number, face: string): number[] {
+  public static clockwiseStateMap(layer: number, face: string): state {
     const lay = layer - 1
     const target = new Array(layer ** 3)
 
@@ -101,7 +121,7 @@ export class Order {
             break
           case 'L':
             posFrom = new THREE.Vector3(0, i, j)
-            posTo = new THREE.Vector3(0, j, lay - i)
+            posTo = new THREE.Vector3(0, lay - j, i)
             break
           case 'F':
             posFrom = new THREE.Vector3(i, j, 2)
@@ -109,15 +129,15 @@ export class Order {
             break
           case 'B':
             posFrom = new THREE.Vector3(i, j, 0)
-            posTo = new THREE.Vector3(j, lay - i, 0)
-            break
-          case 'U':
-            posFrom = new THREE.Vector3(i, 2, j)
-            posTo = new THREE.Vector3(j, 2, lay - i)
+            posTo = new THREE.Vector3(lay - j, i, 0)
             break
           case 'D':
             posFrom = new THREE.Vector3(i, 0, j)
             posTo = new THREE.Vector3(j, 0, lay - i)
+            break
+          case 'U':
+            posFrom = new THREE.Vector3(i, 2, j)
+            posTo = new THREE.Vector3(lay - j, 2, i)
             break
           default:
             posFrom = new THREE.Vector3(0, 0, 0)
@@ -130,4 +150,68 @@ export class Order {
     }
     return target
   }
+  private _clockwiseStateMap(): state {
+
+    const target = new Array(this.layer ** 3)
+    const antiTarget = this._counterClockwiseStateMap()
+    antiTarget.forEach((value: number, index: number) => {
+      target[value] = index
+    })
+    return target
+  }
+  private _counterClockwiseStateMap(): state {
+    const lay = this.layer - 1
+    const target = new Array(this.layer ** 3)
+
+    // set target to standard form first
+    for (let i = 0; i < target.length; i++) {
+      target[i] = i
+    }
+
+    const layerVec = new THREE.Vector3(this.layer ** 2, this.layer, 1)
+    for (let i = 0; i < this.layer; i++) {
+      for (let j = 0; j < this.layer; j++) {
+        for (let level = 0; level < this.level; level++) {
+          let posFrom: THREE.Vector3
+          let posTo: THREE.Vector3
+          switch (this.face) {
+            case 'R':
+              posFrom = new THREE.Vector3(lay - level, i, j)
+              posTo = new THREE.Vector3(lay - level, lay - j, i)
+              break
+            case 'L':
+              posFrom = new THREE.Vector3(level, i, j)
+              posTo = new THREE.Vector3(level, j, lay - i)
+              break
+            case 'F':
+              posFrom = new THREE.Vector3(i, j, lay - level)
+              posTo = new THREE.Vector3(lay - j, i, lay - level)
+              break
+            case 'B':
+              posFrom = new THREE.Vector3(i, j, level)
+              posTo = new THREE.Vector3(j, lay - i, level)
+              break
+            case 'D':
+              posFrom = new THREE.Vector3(i, level, j)
+              posTo = new THREE.Vector3(lay - j, level, i)
+              break
+            case 'U':
+              posFrom = new THREE.Vector3(i, lay - level, j)
+              posTo = new THREE.Vector3(j, lay - level, lay - i)
+              break
+            default:
+              posFrom = new THREE.Vector3(0, 0, 0)
+              posTo = new THREE.Vector3(0, 0, 0)
+          }
+          const from_ = layerVec.dot(posFrom)
+          const to_ = layerVec.dot(posTo)
+          target[to_] = from_
+        }
+      }
+    }
+    return target
+  }
+  // private _counterClockwiseStateMap(): state {
+  //   return Order.counterClockwiseStateMap(this.layer, this.face)
+  // }
 }

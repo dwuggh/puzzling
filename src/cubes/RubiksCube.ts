@@ -8,7 +8,7 @@ import * as RED from '../assets/cubes/red.png'
 import * as WHITE from '../assets/cubes/white.png'
 import * as YELLOW from '../assets/cubes/yellow.png'
 
-import { state, Order } from './Order'
+import { state, Order, Direction } from './Order'
 
 /*
   the interface to load all three-created regular cube models
@@ -41,6 +41,14 @@ class MyCubeMaterial {
   }
 }
 
+interface FaceIndicesHelper {
+  R: (i: number, j: number, level: number) => number
+  L: (i: number, j: number, level: number) => number
+  U: (i: number, j: number, level: number) => number
+  D: (i: number, j: number, level: number) => number
+  F: (i: number, j: number, level: number) => number
+  B: (i: number, j: number, level: number) => number
+}
 /*
   create a N layer rubik's cube.
 */
@@ -50,7 +58,7 @@ export class RubiksCube implements RegularModel {
   group: THREE.Group
   orderQueue: Order[]
   state: state
-  test = true
+  test = false
   isRotating: boolean
   subgroup: THREE.Group
   rotationGroup: THREE.Object3D[]
@@ -58,14 +66,7 @@ export class RubiksCube implements RegularModel {
   axisY: THREE.Vector3
   axisZ: THREE.Vector3
 
-  readonly FaceIndicesHelper: {
-    R: (i: number, j: number) => number
-    L: (i: number, j: number) => number
-    U: (i: number, j: number) => number
-    D: (i: number, j: number) => number
-    F: (i: number, j: number) => number
-    B: (i: number, j: number) => number
-  }
+  readonly faceIndicesHelper: FaceIndicesHelper
 
   constructor(layer: number) {
     this.layer = layer
@@ -98,25 +99,24 @@ export class RubiksCube implements RegularModel {
     }
 
     // help construct a rotation group
-    this.FaceIndicesHelper = {
-      B: (i: number, j: number) => {
-        return i * this.layer ** 2 + j * this.layer
+    this.faceIndicesHelper = {
+      B: (i: number, j: number, level = 0) => {
+        return i * this.layer ** 2 + j * this.layer + level
       },
-
-      F: (i: number, j: number) => {
-        return i * this.layer ** 2 + j * this.layer + this.layer - 1
+      F: (i: number, j: number, level = 0) => {
+        return i * this.layer ** 2 + j * this.layer + (this.layer - 1 - level )
       },
-      U: (i: number, j: number) => {
-        return i * this.layer ** 2 + (this.layer - 1) * this.layer + j
+      U: (i: number, j: number, level = 0) => {
+        return i * this.layer ** 2 + (this.layer - 1 - level ) * this.layer + j
       },
-      D: (i: number, j: number) => {
-        return i * this.layer ** 2 + 0 * this.layer + j
+      D: (i: number, j: number, level = 0) => {
+        return i * this.layer ** 2 + level * this.layer + j
       },
-      L: (i: number, j: number) => {
-        return 0 * this.layer ** 2 + i * this.layer + j
+      L: (i: number, j: number, level = 0) => {
+        return level * this.layer ** 2 + i * this.layer + j
       },
-      R: (i: number, j: number) => {
-        return (this.layer - 1) * this.layer ** 2 + i * this.layer + j
+      R: (i: number, j: number, level = 0) => {
+        return (this.layer - 1 - level ) * this.layer ** 2 + i * this.layer + j
       },
     }
   }
@@ -222,7 +222,6 @@ export class RubiksCube implements RegularModel {
     perform an specific order.
   */
   public performOrder(order: Order): void {
-
     // set which axis should be used
     let axis: THREE.Vector3
     switch (order.face) {
@@ -232,29 +231,29 @@ export class RubiksCube implements RegularModel {
       case 'L':
         axis = this.axisX
         break
-      case 'D':
+      case 'U':
         axis = this.axisY.clone().negate()
         break
-      case 'U':
+      case 'D':
         axis = this.axisY
         break
-      case 'B':
+      case 'F':
         axis = this.axisZ.clone().negate()
         break
-      case 'F':
+      case 'B':
         axis = this.axisZ
         break
       default:
         axis = new THREE.Vector3(0, 0, 0)
     }
 
-    const anglePerFrame = 0.1
+    const anglePerFrame = order.direction == Direction.clockwise ? 0.3 : -0.3
     if (this.isRotating) {
       // return
       const remainingAngle = order.getRemainingAngle()
 
       // if the remaining angle from target point is too small
-      if (remainingAngle < anglePerFrame) {
+      if (Math.abs(remainingAngle) < Math.abs(anglePerFrame)) {
         this._rotateGroupFromAxisAngle(axis, remainingAngle)
         this.isRotating = false
         this.orderQueue.pop()
@@ -267,8 +266,7 @@ export class RubiksCube implements RegularModel {
           oldState.push(this.state[i])
           oldMeshs.push(this.meshs[i])
         }
-        const target = Order.clockwiseStateMap(this.layer, order.face)
-        target.forEach((value: number, index: number) => {
+        order.targetState.forEach((value: number, index: number) => {
           this.state[index] = oldState[value]
           this.meshs[index] = oldMeshs[value]
         })
@@ -280,7 +278,7 @@ export class RubiksCube implements RegularModel {
         order.rotatedDegree += anglePerFrame
       }
     } else {
-      this._setRotationGroup(order.face)
+      this._setRotationGroup(order)
       this._rotateGroupFromAxisAngle(axis, anglePerFrame)
       this.isRotating = true
       order.rotatedDegree += anglePerFrame
@@ -292,7 +290,6 @@ export class RubiksCube implements RegularModel {
     translate mesh and then rotate it on world axis.
   */
   private _rotateGroupFromAxisAngle(axis: THREE.Vector3, angle: number) {
-    // console.log(this.rotationGroup, axis)
     for (const obj of this.rotationGroup) {
       const pos = obj.position.clone()
       pos.applyAxisAngle(axis, angle)
@@ -304,16 +301,19 @@ export class RubiksCube implements RegularModel {
   /*
     set up an array for rotation.
   */
-  private _setRotationGroup(face: string) {
+  private _setRotationGroup(order: Order) {
     // rotationGroup must be empty
     this.rotationGroup = []
     for (let i = 0; i < this.layer; i++) {
       for (let j = 0; j < this.layer; j++) {
         // https://stackoverflow.com/questions/56568423/typescript-no-index-signature-with-a-parameter-of-type-string-was-found-on-ty/56569217
-        const index = (this.FaceIndicesHelper as any)[face](i, j)
-        this.rotationGroup.push(this.meshs[index])
+        for (let level = 0; level < order.level; level ++) {
+          const index = this.faceIndicesHelper[order.face as keyof FaceIndicesHelper](i, j, level)
+          this.rotationGroup.push(this.meshs[index])
+        }
       }
     }
+    console.log(this.rotationGroup)
   }
 
   // public performOrderList(ords: order[]): void {}
