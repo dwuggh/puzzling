@@ -1,4 +1,4 @@
-# Quasar App (puzzling_quasar)
+# puzzling
 
 A Quasar Framework app
 

@@ -37,11 +37,16 @@ export class Scenario {
   }
 
   public onWindowResize = () => {
-    this.width = window.innerWidth * 0.8
-    this.height = window.innerHeight * 0.8
-    this.camera.aspect = this.width / this.height
+
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement
+    const rect = canvas.parentNode.getBoundingClientRect()
+    canvas.width = rect.width * 0.8
+    canvas.height = rect.height * 0.8
+    // this.width = window.innerWidth * 0.8
+    // this.height = window.innerHeight * 0.8
+    this.camera.aspect = canvas.width / canvas.height
     this.camera.updateMatrix()
-    this.renderer.setSize(this.width, this.height)
+    this.renderer.setSize(canvas.width, canvas.height)
   }
 
   public animate = () => {
