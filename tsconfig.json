@@ -1,8 +1,32 @@
 {
-  "extends": "@quasar/app/tsconfig-preset",
   "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es6",
+    "paths": {
+      "src/*": ["src/*"],
+      "app/*": ["*"],
+      "components/*": ["src/components/*"],
+      "layouts/*": ["src/layouts/*"],
+      "pages/*": ["src/pages/*"],
+      "assets/*": ["src/assets/*"],
+      "boot/*": ["src/boot/*"]
+    },
+    "types": ["quasar"],
+
+
     "baseUrl": ".",
     "strictNullChecks": false,
     "experimentalDecorators": true
-  }
+  },
+  "exclude": [
+    "/dist", ".quasar", "node_modules",
+    "src-electron/main-process/*.js"
+             ]
 }

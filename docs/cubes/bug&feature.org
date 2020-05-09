@@ -1,0 +1,57 @@
+* features
+** TODO keybinding prompt
+*** description
+    show current keybindings somewhere
+*** report date
+    <2020-05-04 Mon>
+** TODO custom keybinding
+*** description
+    allow users custom their keybindings
+*** report date
+    <2020-05-04 Mon>
+** TODO cstimer keybinding preset
+*** description
+    cstimer keybinding preset
+*** report date
+   <2020-05-04 Mon>
+** TODO refactor generateMeshs
+*** description
+    abstract meshs generation to a class, for better looking and code structure
+*** report date
+   <2020-05-04 Mon>
+** TODO high layer cube support
+*** description
+    4x4x4 -- 7x7x7 layer rubiks cube support
+*** report date
+    <2020-05-04 Mon>
+** TODO timer
+*** description
+    set a timer
+*** report date
+   <2020-05-04 Mon>
+** TODO scramble
+*** description
+    auto scramble, WCA scramble generator
+*** report date
+   <2020-05-04 Mon>
+** TODO solver
+*** description
+    give a solution to current cube state
+*** report date
+   <2020-05-04 Mon>
+** TODO statistics
+*** description
+    statistic datas, need SQL support
+*** report date
+   <2020-05-04 Mon>
+
+
+
+
+* bugs
+** TODO unexpected behaviour of Scenario.onWindowResize
+*** description
+    1. a bit larger than window, probably other component's issue
+    2. squeeze cube when resizing
+*** report date
+    <2020-05-04 Mon>

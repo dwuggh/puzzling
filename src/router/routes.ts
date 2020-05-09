@@ -6,6 +6,12 @@ const routes: RouteConfig[] = [
     component: () => import('layouts/MainLayout.vue'),
     // children: [{ path: '', component: () => import('pages/Index.vue') }]
     children: [{ path: '', component: () => import('components/Cube.vue') }]
+  },
+  {
+    path: '/playground',
+    component: () => import('layouts/MainLayout.vue'),
+    // children: [{ path: '', component: () => import('pages/Index.vue') }]
+    children: [{ path: '', component: () => import('components/Cube.vue') }]
   }
 ];
 

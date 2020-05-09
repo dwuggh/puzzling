@@ -1,3 +1,4 @@
+
 import * as THREE from 'three'
 
 /*
@@ -8,6 +9,7 @@ import * as THREE from 'three'
   examples: 2R, L3, U', D13, 2F3', 2F'3, etc
 */
 export type state = number[]
+
 
 export enum Direction {
   counterClockwise,
@@ -33,6 +35,14 @@ export class Order {
     this.name = name
     this.layer = layer
     const a = name[0]
+    if (name == 'Q') {
+      this.face = 'Q'
+      this.moveCount = 0
+      this.rotatedDegree = 0
+      this.direction = null
+      this.targetState = null
+      return
+    }
     if (isNaN(Number(a))) {
       this.level = 1
       this.face = a

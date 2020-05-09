@@ -32,11 +32,14 @@
         >
           Essential Links
         </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <!-- <EssentialLink
+             v-for="link in essentialLinks"
+             :key="link.title"
+             v-bind="link"
+             /> -->
+        <q-item>
+
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -47,13 +50,13 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink'
+// import EssentialLink from 'components/EssentialLink'
 
 export default {
   name: 'MainLayout',
 
   components: {
-    EssentialLink
+    // EssentialLink
   },
 
   data () {

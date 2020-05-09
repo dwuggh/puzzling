@@ -1,6 +1,5 @@
 import * as THREE from 'three'
-// import { TaskRunner } from './Scenario'
-// declare module '*.png'
+
 import * as BLUE from '../assets/cubes/blue.png'
 import * as GREEN from '../assets/cubes/green.png'
 import * as ORANGE from '../assets/cubes/orange.png'
@@ -9,6 +8,8 @@ import * as WHITE from '../assets/cubes/white.png'
 import * as YELLOW from '../assets/cubes/yellow.png'
 
 import { state, Order, Direction } from './Order'
+import { Mesh } from 'three'
+import { log } from 'util'
 
 /*
   the interface to load all three-created regular cube models
@@ -60,21 +61,27 @@ export class RubiksCube implements RegularModel {
   state: state
   test = false
   isRotating: boolean
-  subgroup: THREE.Group
   rotationGroup: THREE.Object3D[]
   axisX: THREE.Vector3
   axisY: THREE.Vector3
   axisZ: THREE.Vector3
 
   readonly faceIndicesHelper: FaceIndicesHelper
+  private standardState: state
 
   constructor(layer: number) {
     this.layer = layer
+    this.standardState = new Array(layer ** 3)
+    for (let i = 0; i < layer ** 3; i++) {
+      this.standardState[i] = i
+    }
++
+    console.log(this.standardState)
+
     this.meshs = []
     this.orderQueue = []
 
     this.group = new THREE.Group()
-    this.subgroup = new THREE.Group()
     this.rotationGroup = []
 
     // don't exactly know why, but the world coordinates seem to stick with this group, so no further rotation needed on these axes
@@ -146,7 +153,7 @@ export class RubiksCube implements RegularModel {
 
     for (let i = 0; i < this.layer; i++) {
       for (let j = 0; j < this.layer; j++) {
-        this.meshs[
+        let values = this.meshs[
           i * this.layer ** 2 + j * this.layer + 0
         ].material[5].setValues(this._loadStickers(5))
         this.meshs[
@@ -208,7 +215,6 @@ export class RubiksCube implements RegularModel {
     // manual test codes
     if (this.test) {
       this.test = false
-      console.log(this.subgroup.rotation)
     }
 
     // get next order (in progress or not)
@@ -224,6 +230,12 @@ export class RubiksCube implements RegularModel {
   public performOrder(order: Order): void {
     // set which axis should be used
     let axis: THREE.Vector3
+    // Q stands for quit, back to standard state immadiately
+    if (order.name == 'Q') {
+      this._toStandardState()
+      this.orderQueue.pop()
+      return
+    }
     switch (order.face) {
       case 'R':
         axis = this.axisX.clone().negate()
@@ -247,9 +259,14 @@ export class RubiksCube implements RegularModel {
         axis = new THREE.Vector3(0, 0, 0)
     }
 
-    const anglePerFrame = order.direction == Direction.clockwise ? 0.3 : -0.3
+    // TODO: better animation
+    let anglePerFrame = 0
+    if (this.orderQueue.length > 1) {
+      anglePerFrame = order.direction == Direction.clockwise ? 1.0 : -1.0
+    } else {
+      anglePerFrame = order.direction == Direction.clockwise ? 0.38 : -0.38
+    }
     if (this.isRotating) {
-      // return
       const remainingAngle = order.getRemainingAngle()
 
       // if the remaining angle from target point is too small
@@ -273,7 +290,6 @@ export class RubiksCube implements RegularModel {
         return
       } else {
         // if not, rotate a fixed degree
-        // TODO: better animation
         this._rotateGroupFromAxisAngle(axis, anglePerFrame)
         order.rotatedDegree += anglePerFrame
       }
@@ -316,7 +332,39 @@ export class RubiksCube implements RegularModel {
     console.log(this.rotationGroup)
   }
 
-  // public performOrderList(ords: order[]): void {}
+  /*
+    perform immadiate rotation according to given order.
+  */
+  private _performRotationFromOrder(order: Order) {
+
+  }
+
+  // switch to solved state immadiately
+  private _toStandardState(): void {
+
+    const oldMeshs: THREE.Mesh[] = []
+    this.meshs.forEach((cubelet) => {
+      let index = Number( cubelet.name)
+      const k = index % this.layer
+      index -= k
+      index /= this.layer
+      const j = index % this.layer
+      index -= j
+      index /= this.layer
+      const i = index
+
+      oldMeshs.push(cubelet)
+      cubelet.position.set(i-1, j-1, k-1)
+      cubelet.rotation.set(0, 0, 0)
+
+    })
+    console.log(oldMeshs)
+    for (let i = 0; i < oldMeshs.length; i++) {
+      this.meshs[this.state[i]] = oldMeshs[i]
+    }
+
+    this.state = Object.assign([], this.standardState)
+  }
 
   // // randomly scramble this cube and return afterward state
   // public scramble(): state {}

@@ -22,6 +22,8 @@ export class KeyMap {
   Yp: Key
   Z: Key
   Zp: Key
+
+  Q: Key
   constructor(defaults = 1, map?: Key[]) {
     if (defaults == 1) {
       this.R = 'KeyR'
@@ -85,6 +87,7 @@ export class KeyMap {
       this.Z = map[16]
       this.Zp = map[17]
     }
+    this.Q = 'Space'
   }
 
   public listen(key: Key, cube: RubiksCube) {
@@ -143,6 +146,8 @@ export class KeyMap {
       case this.Zp:
         cube.orderQueue.unshift(new Order('3B'))
         break
+      case this.Q:
+        cube.orderQueue.unshift(new Order('Q'))
       default:
         return
     }
