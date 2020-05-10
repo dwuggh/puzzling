@@ -1,12 +1,24 @@
 #+TITLE: the Puzzling Project
+#+TODO: TODO(t) | DONE(d)
+#+TODO: ONIT(o) | CANCELED(c)
 * about
-  - a rubik's cube simulator
+  - a simple rubik's cube simulator
   - a platform for cubes and puzzles
   [[./proto1.png]]
 * purpose
+** this project
+*** full-featured visual cube emulator
+    - all WCA events
+    - auto scramble & timer and statistics
+    - algorithm database & solution helper (CFOP, megaminx PLL, etc)
+*** other puzzles
+    - 15 puzzle
+    - other Twisty Puzzles (mirror cube, 2x3x3, etc)
+    - and more...
+** as a student
   - for fun
   - learn how to develop a software from scratch
-  - get familiar with modern designing mode
+  - get familiar with modern designing patterns
   - learn Computer Graphics
   - teamwork with git
 * structure
@@ -16,9 +28,10 @@
    - a modern front-end framework
    - easy to learn and use(relatively)
    - vue CLI
-** electron
-   - use vue-electron package
-   - electron is not the main focus
+** quasar
+   - a vue.js based framework
+   - built-in electron and SPA(Single Page App) support
+   - a good vue.js component library
 ** webGL
 *** three.js
     - easy to learn
@@ -31,52 +44,52 @@
    - we may have to write our own database engine
    - database designing
    - mySQL, sqlite, etc
+** electron
+   - quasar built-in support
+   - use vue-electron package
+   - electron is not the main focus
 * code style
 ** eslint
    - need discussion
-   - semicolon
-   - tab width
-   - parentheses problems
 ** DRY --Don't Repeat Yourself
-   - highly reusable API
    - good abstraction
+   - reusable API
 * comments and documents
 ** need good advice
 * version control & package management
 ** git
    - [[https://github.com/dwuggh/puzzling][github]]
    - [[https://git.ustc.edu.cn/dwuggh/puzzling][gitlab]]
-** npm
+** yarn/npm
 ** test
    - not so sure how to deploy tests
-   - gitlab
-   - travis
+   - gitlab CI
 * platform
   - linux
-  - macOS
   - windows
+  - macOS
 * license
   - need discussion
-  - GPLv3
-  - LGPL
+  - currently GPLv3
 * IDEs
-  - webstorm (edu license)
   - vscode
+  - webstorm (edu license)
   - emacs/vim
 * some fantasy
-** typescript?
-   - better language
+** ONIT typescript?
+   - type system means much more completion options
    - better OOP support
-   - I'm not familiar with typescript, but since three.js and vue both have ts support, we may give it a try.
-** refactor to C++ on Qt platform?
+   - strict type check can be annoying
+** CANCELED rebulid on C++ Qt platform?
 *** pros:
-    - better language
     - better OOP support
-    - faster
-    - more flexible(mainly because I'm more familiar with openGL)
+    - lightweight and fast
+    - more flexible
 *** cons:
+    - the worst package management
     - less extensibility
     - node.js is modernized and it is the future trend
     - much more code, especially openGL
 ** is vue necessary?
    - perhaps not, but we could try it first
+   - using a framework can save lots of code
