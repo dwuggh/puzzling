@@ -1,0 +1,66 @@
+#+TITLE: Learning Route
+
+
+* editor
+** vscode(recommended)
+** webstorm(use edu license)(recommended)
+** emacs/vim(my editor, most powerful yet not recommended if you just want to get this over with)
+* git
+  - https://www.liaoxuefeng.com/wiki/896043488029600
+  - there is no need to learn all these contents at once, here I list some useful git commands, which should be enough for beginner-use:
+  #+BEGIN_SRC shell
+
+git clone
+git checkout -b new_branch
+git checkout exist_branch
+git add
+git stage
+git commit
+git push
+
+  #+END_SRC
+  - and if you use a graphical git client, like some vscode add-on or intellij's, then you can use your mouse. It can be both convenient and the opposite.
+  - our git repository:
+    - note: use quasar-env branch as main branch
+    - ustc's gitlab, we shall use this one: https://git.ustc.edu.cn/dwuggh/puzzling
+    - github repo, syncornized with the previous repo: https://github.com/dwuggh/puzzling
+* language
+** javascript
+   - never read it, but I've heard that this one is really good: https://eloquentjavascript.net/
+   - I've read 70% of this: https://www.liaoxuefeng.com/wiki/1022910821149312
+   - ES6 standard, lots of useful features: https://es6.ruanyifeng.com/
+** typescript
+   - https://ts.xcatliu.com/
+   - https://zhongsp.gitbooks.io/typescript-handbook/content/
+** html & css
+   - html: just get familiar with those tags
+   - I don't really think html is a programming language
+   - a tutorial(dictionary, I'd say) I barely read: https://www.w3schools.com/
+
+* node.js
+  - we may use yarn
+  - liaoxuefeng's tutorial
+  - not main focus
+* front end
+** vue.js
+   - the offical documentation: https://cn.vuejs.org/v2/guide/
+   - other tutorials post on the offical site(vue mastery, etc)
+   - class component for typescript: https://class-component.vuejs.org/
+   - vue class decorator: https://github.com/kaorun343/vue-property-decorator
+** quasar
+   - the offical website(Chinese): https://www.quasarchs.com/
+
+* WebGL(optional)
+** three.js
+   - offical website: https://threejs.org
+   - offical chinese translation: https://threejs.org/docs/index.html#manual/zh/introduction/Creating-a-scene
+
+* others projects
+** cuber
+   - I learned a lot from this project
+   - https://gitee.com/huazhechen/cuber
+** vue's offical examples
+   - https://cn.vuejs.org/v2/examples/
+** cstimer
+   - a very famous cube timer, not open source
+   - https://www.cstimer.net/
